@@ -10,9 +10,9 @@ import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 
 public class MainPage {
-    private static ElementsCollection spends = $$(By.xpath("//table[@class='table spendings-table']//td"));
-    private static SelenideElement deleteButton = $(By.xpath("//button[text() = 'Delete selected']"));
-    private static ElementsCollection spendRow = $(".spendings-table tbody").$$("tr");
+    private  ElementsCollection spends = $$(By.xpath("//table[@class='table spendings-table']//td"));
+    private  SelenideElement deleteButton = $(By.xpath("//button[text() = 'Delete selected']"));
+    private  ElementsCollection spendRow = $(".spendings-table tbody").$$("tr");
     private final By cellSelector = By.cssSelector("td");
 
     public MainPage clickDeleteSelectedButton() {
@@ -35,7 +35,7 @@ public class MainPage {
     }
 
     private SelenideElement getCheckBox(String description) {
-        return getRowByDescription(description).$$(cellSelector).first();
+        return getRowByDescription(description).$(cellSelector);
     }
 
 }
