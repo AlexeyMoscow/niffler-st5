@@ -9,6 +9,5 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 public @interface Category {
     String category();
-
     String username();
 }

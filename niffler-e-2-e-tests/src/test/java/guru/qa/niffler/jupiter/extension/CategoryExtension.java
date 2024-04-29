@@ -5,8 +5,7 @@ import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.model.CategoryJson;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
-import org.junit.jupiter.api.extension.BeforeEachCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
@@ -16,7 +15,7 @@ import java.util.Objects;
 
 import static okhttp3.logging.HttpLoggingInterceptor.Level.BODY;
 
-public class CategoryExtension implements BeforeEachCallback {
+public class CategoryExtension implements BeforeEachCallback, ParameterResolver {
 
     public static final ExtensionContext.Namespace NAMESPACE
             = ExtensionContext.Namespace.create(CategoryExtension.class);
@@ -57,5 +56,18 @@ public class CategoryExtension implements BeforeEachCallback {
                     }
                 }
         );
+    }
+
+    @Override
+    public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
+        return parameterContext
+                .getParameter()
+                .getType()
+                .isAssignableFrom(CategoryJson.class);
+    }
+
+    @Override
+    public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
+        return extensionContext.getStore(NAMESPACE).get(extensionContext.getUniqueId());
     }
 }
