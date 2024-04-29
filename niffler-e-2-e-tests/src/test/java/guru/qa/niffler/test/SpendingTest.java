@@ -2,29 +2,31 @@ package guru.qa.niffler.test;
 
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
-import com.codeborne.selenide.SelenideElement;
 import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.Spend;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.SpendJson;
+import guru.qa.niffler.pages.LoginPage;
+import guru.qa.niffler.pages.MainPage;
+import guru.qa.niffler.pages.WelcomePage;
 import io.qameta.allure.Allure;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.OutputType;
-
 import java.io.ByteArrayInputStream;
 import java.util.Objects;
-
-import static com.codeborne.selenide.CollectionCondition.size;
-import static com.codeborne.selenide.Condition.text;
-import static com.codeborne.selenide.Condition.visible;
-import static com.codeborne.selenide.Selenide.$;
 
 
 @WebTest
 public class SpendingTest {
+    private final MainPage mainPage = new MainPage();
+    private final WelcomePage welcomePage = new WelcomePage();
+    private final LoginPage loginPage = new LoginPage();
+
+    private static String userName = "alex";
+    private static String password = "asdlkj";
 
     static {
         Configuration.browserSize = "1920x1080";
@@ -32,18 +34,9 @@ public class SpendingTest {
 
     @BeforeEach
     void doLogin() {
-        // createSpend
         Selenide.open("http://127.0.0.1:3000/");
-        $("a[href*='redirect']").click();
-        $("input[name='username']").setValue("dima");
-        $("input[name='password']").setValue("12345");
-        $("button[type='submit']").click();
-    }
-
-    @Test
-    void anotherTest() {
-        Selenide.open("http://127.0.0.1:3000/");
-        $("a[href*='redirect']").should(visible);
+         welcomePage.clickLoginButton();
+         loginPage.signInUser(userName, password);
     }
 
     @AfterEach
@@ -59,8 +52,8 @@ public class SpendingTest {
     }
 
     @Category(
-            category = "Обучение3",
-            username = "dima"
+            category = "Обучение",
+            username = "alex"
     )
     @Spend(
             description = "QA.GURU Advanced 5",
@@ -69,15 +62,8 @@ public class SpendingTest {
     )
     @Test
     void spendingShouldBeDeletedAfterTableAction(SpendJson spendJson) {
-        SelenideElement rowWithSpending = $(".spendings-table tbody")
-                .$$("tr")
-                .find(text(spendJson.description()))
-                .scrollIntoView(false);
-
-        rowWithSpending.$$("td").first().click();
-        $(".spendings__bulk-actions button").click();
-
-        $(".spendings-table tbody").$$("tr")
-                .shouldHave(size(0));
+        mainPage.clickCheckBoxByDescription(spendJson.description())
+                .clickDeleteSelectedButton()
+                .verifyEmptySpendTable();
     }
 }
